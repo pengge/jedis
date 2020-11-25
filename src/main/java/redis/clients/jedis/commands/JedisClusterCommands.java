@@ -178,6 +178,14 @@ public interface JedisClusterCommands {
 
   Double zscore(String key, String member);
 
+  Tuple zpopmax(String key);
+
+  Set<Tuple> zpopmax(String key, int count);
+
+  Tuple zpopmin(String key);
+
+  Set<Tuple> zpopmin(String key, int count);
+
   List<String> sort(String key);
 
   List<String> sort(String key, SortingParams sortingParameters);
@@ -311,6 +319,8 @@ public interface JedisClusterCommands {
    * @return 
    */
   List<Long> bitfield(String key, String...arguments);
+
+  List<Long> bitfieldReadonly(String key, String...arguments);
   
   /**
    * Used for HSTRLEN Redis command
@@ -444,7 +454,7 @@ public interface JedisClusterCommands {
    * @param consumername
    * @return
    */
-  String xgroupDelConsumer( String key, String groupname, String consumername);
+  Long xgroupDelConsumer( String key, String groupname, String consumername);
 
   /**
    * XREAD [COUNT count] [BLOCK milliseconds] STREAMS key [key ...] ID [ID ...]

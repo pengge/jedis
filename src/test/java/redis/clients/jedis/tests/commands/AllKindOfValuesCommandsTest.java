@@ -7,14 +7,17 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
+import static redis.clients.jedis.Protocol.Command.HGETALL;
 import static redis.clients.jedis.Protocol.Command.GET;
 import static redis.clients.jedis.Protocol.Command.LRANGE;
 import static redis.clients.jedis.Protocol.Command.PING;
 import static redis.clients.jedis.Protocol.Command.RPUSH;
 import static redis.clients.jedis.Protocol.Command.SET;
+import static redis.clients.jedis.Protocol.Command.XINFO;
 import static redis.clients.jedis.ScanParams.SCAN_POINTER_START;
 import static redis.clients.jedis.ScanParams.SCAN_POINTER_START_BINARY;
 import static redis.clients.jedis.params.SetParams.setParams;
+import static redis.clients.jedis.tests.utils.AssertUtil.assertCollectionContains;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +33,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Protocol.Keyword;
 import redis.clients.jedis.ScanParams;
 import redis.clients.jedis.ScanResult;
+import redis.clients.jedis.StreamEntryID;
 import redis.clients.jedis.util.SafeEncoder;
 import redis.clients.jedis.exceptions.JedisDataException;
 
@@ -216,12 +220,12 @@ public class AllKindOfValuesCommandsTest extends JedisCommandTestBase {
     jedis.set("foobar", "bar");
 
     Set<String> keys = jedis.keys("foo*");
-    Set<String> expected = new HashSet<String>();
+    Set<String> expected = new HashSet<>();
     expected.add("foo");
     expected.add("foobar");
     assertEquals(expected, keys);
 
-    expected = new HashSet<String>();
+    expected = new HashSet<>();
     keys = jedis.keys("bar*");
 
     assertEquals(expected, keys);
@@ -232,8 +236,8 @@ public class AllKindOfValuesCommandsTest extends JedisCommandTestBase {
 
     Set<byte[]> bkeys = jedis.keys(bfoostar);
     assertEquals(2, bkeys.size());
-    assertTrue(setContains(bkeys, bfoo));
-    assertTrue(setContains(bkeys, bfoobar));
+    assertCollectionContains(bkeys, bfoo);
+    assertCollectionContains(bkeys, bfoobar);
 
     bkeys = jedis.keys(bbarstar);
 
@@ -636,7 +640,7 @@ public class AllKindOfValuesCommandsTest extends JedisCommandTestBase {
 
     jedis2.set("foo", "bar");
 
-    Map<String, String> map = new HashMap<String, String>();
+    Map<String, String> map = new HashMap<>();
     map.put("a", "A");
     map.put("b", "B");
 
@@ -865,6 +869,39 @@ public class AllKindOfValuesCommandsTest extends JedisCommandTestBase {
       assertArrayEquals(expected.get(i), list.get(i));
 
     assertEquals("PONG", SafeEncoder.encode((byte[]) jedis.sendCommand(PING)));
+  }
+
+
+  @Test
+  public void encodeCompleteResponse(){
+    HashMap<String,String> entry = new HashMap<>();
+    entry.put("foo", "bar");
+    jedis.xadd( "mystream", StreamEntryID.NEW_ENTRY, entry );
+    String status = jedis.xgroupCreate("mystream", "mygroup", null, false);
+
+    Object obj = jedis.sendCommand(XINFO, "STREAM", "mystream");
+    List encodeObj =  (List)SafeEncoder.encodeObject(obj);
+
+    assertEquals( 14, encodeObj.size() );
+    assertEquals( "length", encodeObj.get(0) );
+    assertEquals( 1L, encodeObj.get(1) );
+
+    List entryAsList = new ArrayList(2);
+    entryAsList.add("foo");
+    entryAsList.add("bar");
+
+    assertEquals( entryAsList, ((List)encodeObj.get(11)).get(1) );
+
+    assertEquals("PONG", SafeEncoder.encodeObject(jedis.sendCommand(PING)));
+
+    entry.put("foo2", "bar2");
+    jedis.hset("hash:test:encode", entry);
+    encodeObj =   (List)SafeEncoder.encodeObject(jedis.sendCommand(HGETALL, "hash:test:encode"));
+
+    assertEquals( 4, encodeObj.size() );
+    assertTrue(encodeObj.contains("foo"));
+    assertTrue(encodeObj.contains("foo2"));
+
   }
 
 }

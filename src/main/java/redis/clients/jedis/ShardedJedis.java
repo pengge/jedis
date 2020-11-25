@@ -574,13 +574,25 @@ public class ShardedJedis extends BinaryShardedJedis implements JedisCommands, C
   }
 
   @Override
-  public Set<Tuple> zpopmin(final String key) {
+  public Tuple zpopmax(final String key) {
+    Jedis j = getShard(key);
+    return j.zpopmax(key);
+  }
+
+  @Override
+  public Set<Tuple> zpopmax(final String key, final int count) {
+    Jedis j = getShard(key);
+    return j.zpopmax(key, count);
+  }
+
+  @Override
+  public Tuple zpopmin(final String key) {
     Jedis j = getShard(key);
     return j.zpopmin(key);
   }
 
   @Override
-  public Set<Tuple> zpopmin(final String key, final long count) {
+  public Set<Tuple> zpopmin(final String key, final int count) {
     Jedis j = getShard(key);
     return j.zpopmin(key, count);
   }
@@ -975,6 +987,12 @@ public class ShardedJedis extends BinaryShardedJedis implements JedisCommands, C
   }
 
   @Override
+  public List<Long> bitfieldReadonly(String key, final String... arguments) {
+    Jedis j = getShard(key);
+    return j.bitfieldReadonly(key, arguments);
+  }
+
+  @Override
   public Long hstrlen(final String key, final String field) {
     Jedis j = getShard(key);
     return j.hstrlen(key, field);
@@ -1029,7 +1047,7 @@ public class ShardedJedis extends BinaryShardedJedis implements JedisCommands, C
   }
 
   @Override
-  public String xgroupDelConsumer(String key, String groupname, String consumername) {
+  public Long xgroupDelConsumer(String key, String groupname, String consumername) {
     Jedis j = getShard(key);
     return j.xgroupDelConsumer(key, groupname, consumername);
   }
@@ -1065,6 +1083,26 @@ public class ShardedJedis extends BinaryShardedJedis implements JedisCommands, C
       int retries, boolean force, StreamEntryID... ids) {
     Jedis j = getShard(key);
     return j.xclaim(key, group, consumername, minIdleTime, newIdleTime, retries, force, ids);
+  }
+
+  @Override
+  public StreamInfo xinfoStream(String key) {
+
+    Jedis j = getShard(key);
+    return j.xinfoStream(key);
+  }
+
+  @Override
+  public List<StreamGroupInfo> xinfoGroup(String key) {
+
+    Jedis j = getShard(key);
+    return j.xinfoGroup(key);
+  }
+
+  @Override
+  public List<StreamConsumersInfo> xinfoConsumers(String key, String group){
+    Jedis j = getShard(key);
+    return  j.xinfoConsumers(key, group);
   }
 
   public Object sendCommand(ProtocolCommand cmd, String... args) {

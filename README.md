@@ -1,9 +1,9 @@
-[![GitHub issues](https://img.shields.io/github/release/xetorthio/jedis.svg)](https://github.com/xetorthio/jedis/releases/latest)
-[![Build Status](https://travis-ci.org/xetorthio/jedis.png?branch=master)](https://travis-ci.org/xetorthio/jedis)
+[![Release](https://img.shields.io/github/release/redis/jedis.svg)](https://github.com/redis/jedis/releases/latest)
+[![Build Status](https://travis-ci.org/redis/jedis.png?branch=master)](https://travis-ci.org/redis/jedis)
 [![Maven Central](https://img.shields.io/maven-central/v/redis.clients/jedis.svg)](http://mvnrepository.com/artifact/redis.clients/jedis)
 [![Javadocs](https://www.javadoc.io/badge/redis.clients/jedis.svg)](https://www.javadoc.io/doc/redis.clients/jedis)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE.txt)
-[![Language grade: Java](https://img.shields.io/lgtm/grade/java/g/xetorthio/jedis.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/xetorthio/jedis/context:java)
+[![Language grade: Java](https://img.shields.io/lgtm/grade/java/g/redis/jedis.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/redis/jedis/context:java)
 [![Gitter](https://badges.gitter.im/xetorthio/jedis.svg)](https://gitter.im/xetorthio/jedis?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 # Jedis
@@ -13,8 +13,6 @@ Jedis is a blazingly small and sane [Redis](http://github.com/antirez/redis "Red
 Jedis was conceived to be EASY to use.
 
 Jedis is fully compatible with redis 2.8.x, 3.x.x and above*.
-
-*There are still couple of new functionalities added Redis 5 missing in Jedis like Streams.
 
 ## Community
 
@@ -33,6 +31,7 @@ All of the following redis features are supported:
 - Commands operating on lists
 - Commands operating on sets
 - Commands operating on sorted sets
+- Commands operating on streams
 - Transactions
 - Pipelining
 - Publish/Subscribe
@@ -58,7 +57,7 @@ Or use it as a maven dependency:
 <dependency>
     <groupId>redis.clients</groupId>
     <artifactId>jedis</artifactId>
-    <version>3.1.0</version>
+    <version>3.3.0</version>
     <type>jar</type>
     <scope>compile</scope>
 </dependency>
@@ -91,7 +90,7 @@ and
     <dependency>
       <groupId>redis.clients</groupId>
       <artifactId>jedis</artifactId>
-      <version>3.2.0-SNAPSHOT</version>
+      <version>3.4.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 ```
@@ -115,7 +114,7 @@ And you are done!
 
 ## Jedis Cluster
 
-Redis cluster [specification](http://redis.io/topics/cluster-spec) (still under development) is implemented
+Redis cluster [specification](http://redis.io/topics/cluster-spec) is implemented
 
 ```java
 Set<HostAndPort> jedisClusterNodes = new HashSet<HostAndPort>();

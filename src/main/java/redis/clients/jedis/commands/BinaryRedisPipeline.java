@@ -233,6 +233,14 @@ public interface BinaryRedisPipeline {
 
   Response<Double> zscore(byte[] key, byte[] member);
 
+  Response<Tuple> zpopmax(byte[] key);
+
+  Response<Set<Tuple>> zpopmax(byte[] key, int count);
+
+  Response<Tuple> zpopmin(byte[] key);
+
+  Response<Set<Tuple>> zpopmin(byte[] key, int count);
+
   Response<Long> zlexcount(byte[] key, byte[] min, byte[] max);
 
   Response<Set<byte[]>> zrangeByLex(byte[] key, byte[] min, byte[] max);
@@ -303,6 +311,8 @@ public interface BinaryRedisPipeline {
 
   Response<List<Long>> bitfield(byte[] key, byte[]... elements);
 
+  Response<List<Long>> bitfieldReadonly(byte[] key, byte[]... elements);
+
   Response<Long> hstrlen(byte[] key, byte[] field);
   
   Response<byte[]> xadd(byte[] key, byte[] id, Map<byte[], byte[]> hash);
@@ -323,7 +333,7 @@ public interface BinaryRedisPipeline {
   
   Response<Long> xgroupDestroy(byte[] key, byte[] groupname);
   
-  Response<String> xgroupDelConsumer(byte[] key, byte[] groupname, byte[] consumername);
+  Response<Long> xgroupDelConsumer(byte[] key, byte[] groupname, byte[] consumername);
 
   Response<List<StreamPendingEntry>> xpending(byte[] key, byte[] groupname, byte[] start, byte[] end, int count, byte[] consumername);
   
@@ -347,6 +357,8 @@ public interface BinaryRedisPipeline {
   Response<byte[]> objectEncoding(byte[] key);
 
   Response<Long> objectIdletime(byte[] key);
+
+  Response<Long> objectFreq(byte[] key);
 
   Response<Double> incrByFloat(byte[] key, double increment);
 
